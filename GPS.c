@@ -47,7 +47,7 @@ void GPS_format(void){
 
 		do									//extracting the $GPRMC logname comand and putting it into array GPS_data
     {											//taken into consideration that ($GPRMC,) isn't in GPS_data array
-    recieved_char = UART0_ReadChar();
+    recieved_char = UART1_ReadChar();
     GPS_data[fill_gps_counter++] = recieved_char ;
 
     }while(recieved_char!='*');
