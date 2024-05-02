@@ -37,10 +37,11 @@ unsigned char UART0_ReadChar(void){                                //function th
     while((UART0_FR_R&0X10) != 0){}
     return (UART0_DR_R&0xFF);
 }
-void UART0_ReadString(char *str , int len){
-     char c = UART0_ReadChar(); //Read String 
+void UART0_ReadString(char *str , int len){       //Read String 
+     char c; 
      int i;	
 	for(i=0;i<len;i++){
+	 char c = UART0_ReadChar();
 		if(c!=CR){
 		*str = c;
 		str++;
@@ -95,9 +96,10 @@ unsigned char UART1_ReadChar(void){								//function that Read Char
 
 void UART1_ReadString(char *str , int len)	      	//Read String
 {	
- char c = UART1_ReadChar();
+        char c;
 	int i;
 	for(i=0;i<len;i++){
+		 c = UART1_ReadChar();
 		if(c!=CR){
 		*str = c;
 		str++;
