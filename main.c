@@ -14,7 +14,6 @@ extern double lon[100];
 extern char j;
 unsigned char button_in1;
 unsigned char button_in2;
-unsigned char check;
 double Total_distance =0;
 double Dis =0;
 //char ary[20] = {0}; 							//for testing
