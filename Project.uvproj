@@ -440,6 +440,11 @@
               <FileType>1</FileType>
               <FilePath>.\Systick.c</FilePath>
             </File>
+            <File>
+              <FileName>Distance.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Distance.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

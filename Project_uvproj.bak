@@ -435,6 +435,11 @@
               <FileType>1</FileType>
               <FilePath>.\UART.c</FilePath>
             </File>
+            <File>
+              <FileName>Systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Systick.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
