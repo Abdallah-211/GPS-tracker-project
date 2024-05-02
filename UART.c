@@ -99,7 +99,7 @@ void UART1_ReadString(char *str , int len)	      	//Read String
 {	
 
 	int i;
-	char c
+	char c;
 	for(i=0;i<len;i++){
 	 c = UART1_ReadChar();
 		if(c!=CR){
@@ -151,7 +151,7 @@ void UART5_ReadString(char *str , int len)	      	//Read String
 {	
 
 	int i;
-	 char c
+	 char c;
 	for(i=0;i<len;i++){
 	  c = UART5_ReadChar();
 		if(c!=CR){
@@ -205,7 +205,7 @@ void UART7_ReadString(char *str , int len)	      	//Read String
 {	
  
 	int i;
-	 char c
+	 char c;
 	for(i=0;i<len;i++){
 		c = UART7_ReadChar();
 		if(c!=CR){
