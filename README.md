@@ -1,5 +1,5 @@
 # GPS-tracker-project
-### GPS tracking system with embedded c using microcontroller tm4c123 
+### GPS tracking system with embedded c using microcontroller tm4c123gh6pm 
 ## Team members:
 1) Abdallah Mohamed Abdelhameed
 2) Ziad Adel Abdallah Mohamed
