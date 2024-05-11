@@ -15,8 +15,8 @@ void UART0_Init(void){
     
     SYSCTL_RCGCUART_R |= 0x0001;
   SYSCTL_RCGCGPIO_R |= 0X0001;
-    while((SYSCTL_PRGPIO_R & 0x01) == 0){}
-    UART0_CTL_R =~UART_CTL_UARTEN;
+    while((SYSCTL_PRGPIO_R & 0x01) == 0);
+    UART0_CTL_R =(0x0001);
     UART0_IBRD_R = 104;
     UART0_FBRD_R = 11;
     UART0_LCRH_R |= 0x70;
@@ -24,7 +24,7 @@ void UART0_Init(void){
     GPIO_PORTA_DEN_R |= 0x03;
     GPIO_PORTA_AFSEL_R |= 0x03;
     GPIO_PORTA_AMSEL_R &= ~0x03;
-    GPIO_PORTA_PCTL_R |= (GPIO_PORTA_PCTL_R&~0XFF)|(0X11);
+    GPIO_PORTA_PCTL_R |= (GPIO_PORTA_PCTL_R&~0XFF)+(0X11);
     
 }
 void UART0_WriteChar(unsigned char ch)   //function to write char
@@ -70,8 +70,8 @@ void UART0_ReadString(char *str , int len){                    //Read String
 void UART1_Init(void){
 SYSCTL_RCGCUART_R |= 0x0002;
 SYSCTL_RCGCGPIO_R |= 0X0002;
-while((SYSCTL_PRGPIO_R & 0x02) == 0){}
-UART1_CTL_R =~UART_CTL_UARTEN;
+while((SYSCTL_PRGPIO_R & 0x02) == 0);
+UART1_CTL_R =~(0x0001);
 UART1_IBRD_R=104;
 UART1_FBRD_R=11;
 UART1_LCRH_R |= 0x70;
@@ -79,7 +79,7 @@ UART1_CTL_R |= 0x301;
 GPIO_PORTB_DEN_R |= 0x03;
 GPIO_PORTB_AFSEL_R |= 0x03;
 GPIO_PORTB_AMSEL_R &= ~0x03;
-GPIO_PORTB_PCTL_R |= (GPIO_PORTB_PCTL_R&~0XFF)|(0X11);
+GPIO_PORTB_PCTL_R |= (GPIO_PORTB_PCTL_R&~0XFF)+(0X11);
 }
 
 
