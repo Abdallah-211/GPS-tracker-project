@@ -1,11 +1,9 @@
 #include "tm4c123gh6pm.h"
 #define FLOAT_SCALE_FACTOR 1000000
 
-int i;
-int lat_int;
-int long_int;
 
 void delay(int n) {
+    int i;
     for (i = 0; i < n; i++); // delay loop
 }
 
@@ -48,7 +46,7 @@ int read(int block, int address) {
 }
 
 void eeprom_write(float latitude[], float longitude[], int size) {
-    int block = 0, address = 0;
+    int block = 0, address = 0, i, lat_int, long_int;
     for (i = 0; i < size; i++) {
 			lat_int = (int)(latitude[i] * FLOAT_SCALE_FACTOR);
         write(lat_int, block, address);
@@ -72,7 +70,7 @@ void eeprom_write(float latitude[], float longitude[], int size) {
 }
 
 void eeprom_read(float latitude[], float longitude[], int size) {
-    int block = 0, address = 0;
+    int block = 0, address = 0, i, lat_int, long_int;
     for (i = 0; i < size; i++) {
         lat_int = read(block, address);
 			latitude[i] = (float)lat_int / FLOAT_SCALE_FACTOR;
