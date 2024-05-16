@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 
-int k=0;
-char temp [50]; // Temporary buffer to hold each float as a string
-char lat_final[2100] = ""; // Assuming a maximum length for the character array
 
 
 void ftos(float latitude[] , float longitude[], char Co_final[], int size)
 {
+int k=0;
+char temp [50]; // Temporary buffer to hold each float as a string
+char lat_final[2100] = ""; // Assuming a maximum length for the character array
+	
 	for ( k = 0; k < size; k++) {
 		
         sprintf(temp, "%.6f", latitude[k]); // Convert float to string with 7 decimal places
