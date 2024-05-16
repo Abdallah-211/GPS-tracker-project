@@ -30,7 +30,7 @@ void GPS_format(void){
 	
 
 do{
-	//UART0_ReadString(command,maxLen);				//for testing
+	//GetCommand_UART0(command,maxLen);				//for testing
 	flag =1;
     	for (i=0; i<7;i++) {
     	if (UART1_getChar()!= GPS_logname[i]) {				//checking for logname ($GPRMC,)
