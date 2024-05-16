@@ -75,6 +75,32 @@ void PORTE_Init(){
 	GPIO_PORTB_DATA_R =0x00;
 }
 
+void Printdata (unsigned char data){ // data = 8 bit hexadecimal data
+	// zeroth bit = D0 = PA7
+	if((data&0x01) == 0x01)	{	GPIO_PORTA_DATA_R |= (1<<7)		;	}
+	else										{	GPIO_PORTA_DATA_R &= (~(1<<7));	}
+	//First bit = D1 = PA6
+	if((data&0x02) == 0x02)	{	GPIO_PORTA_DATA_R |= (1<<6)		;	}
+	else										{	GPIO_PORTA_DATA_R &= (~(1<<6));	}
+	//Second bit = D2 = PA5
+	if((data&0x04) == 0x04)	{	GPIO_PORTA_DATA_R |= (1<<5)		;	}
+	else										{	GPIO_PORTA_DATA_R &= (~(1<<5));	}
+	//Third bit = D3 = PB4
+	if((data&0x08) == 0x08)	{	GPIO_PORTB_DATA_R |= (1<<4)		;	}
+	else										{	GPIO_PORTB_DATA_R &= (~(1<<4));	}
+	//Fourth bit = D4 = PE5
+	if((data&0x10) == 0x10)	{	GPIO_PORTE_DATA_R |= (1<<5)		;	}
+	else										{	GPIO_PORTE_DATA_R &= (~(1<<5));	}
+	//Fifth bit = D5 = PE4
+	if((data&0x20) == 0x20)	{	GPIO_PORTE_DATA_R |= (1<<4)		;	}
+	else										{	GPIO_PORTE_DATA_R &= (~(1<<4));	}
+	//Sixth bit = D6 = PB1->PE1
+	if((data&0x40) == 0x40)	{	GPIO_PORTE_DATA_R |= (1<<1)		;	}
+	else										{	GPIO_PORTE_DATA_R &= (~(1<<1));	}
+	//Seventh bit = D7 = PB0->PD3
+	if((data&0x80) == 0x80)	{	GPIO_PORTD_DATA_R |= (1<<3)		;	}
+	else										{	GPIO_PORTD_DATA_R &= (~(1<<3));	}
+}
 
 
 
