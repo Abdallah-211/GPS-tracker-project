@@ -8,7 +8,6 @@
 #include <string.h>
 #include <stdio.h>
 #include "tm4c123gh6pm.h"
-#include "bit_utilies.h"
 #include <stdlib.h>
 #include "Interrupt.h"
 #include "eeprom.h"
