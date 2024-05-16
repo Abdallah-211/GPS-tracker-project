@@ -1,224 +1,112 @@
 #include "tm4c123gh6pm.h"
-#include <string.h>
 #include <stdint.h>
+#include <string.h>
+#include "UART.h"
+#include "Bit_Utilies.h"
 
-#define CR 0x0D
+#define CB 0x2A								//HexaDecimal for (*)
 
-
-
-//*****************************************************************************
-//
-// UART0
-//
-//*****************************************************************************
 void UART0_Init(void){
-    
-    SYSCTL_RCGCUART_R |= 0x0001;
-  SYSCTL_RCGCGPIO_R |= 0X0001;
-    while((SYSCTL_PRGPIO_R & 0x01) == 0);
-    UART0_CTL_R =(0x0001);
-    UART0_IBRD_R = 104;
-    UART0_FBRD_R = 11;
-    UART0_LCRH_R |= 0x70;
-    UART0_CTL_R |= 0x301;
-    GPIO_PORTA_DEN_R |= 0x03;
-    GPIO_PORTA_AFSEL_R |= 0x03;
-    GPIO_PORTA_AMSEL_R &= ~0x03;
-    GPIO_PORTA_PCTL_R |= (GPIO_PORTA_PCTL_R&~0XFF)+(0X11);
-    
-}
-void UART0_WriteChar(unsigned char ch)   //function to write char
-{
-    while((UART0_FR_R&0X20)!=0){}
-        UART0_DR_R = ch;    
+	SYSCTL_RCGCUART_R |=0x0001; //Activate UART0 
+	SYSCTL_RCGCGPIO_R |=0x0001; //Activate PortA
+	while(GET_BIT(SYSCTL_PRGPIO_R,0)==0 );	
+	UART0_CTL_R &= ~(0x0001);	//Disable UART0
+	UART0_IBRD_R = 0x68; //IBRD=int(160000000/(16*9600)) = 104;
+	UART0_FBRD_R = 0xB;	//FBRD = int(0.166*64 +0.5) = 11
+	UART0_LCRH_R = 0x0070;	// 8-bit word length, enable FIFO 001110000
+	UART0_CTL_R = 0x0301; //enable RXE , TXE and UART 001100000001
+	GPIO_PORTA_AFSEL_R |= 0x03; //enable alt function PA0, PA1
+	GPIO_PORTA_PCTL_R = ( GPIO_PORTA_PCTL_R & 0xFFFFFF00 ) + 0x00000011; //configure UART for PA0,PA1
+	GPIO_PORTA_DEN_R |= 0x03;	//enable digital I/O on PA0, PA1
+	GPIO_PORTA_AMSEL_R &= ~0x03;	//disable analog function on PA0, PA1
 }
 
-unsigned char UART0_ReadChar(void){                                //function that Read Char
-    while((UART0_FR_R&0X10) != 0){}
-    return (UART0_DR_R&0xFF);
-}
-void UART0_ReadString(char *str , int len){                    //Read String 
-   
-     int i;
-     char c;
-	for(i=0;i<len;i++){
-	  c = UART0_ReadChar(); 
-		if(c!=CR){
-		*str = c;
-		str++;
-		UART0_WriteChar(c);
-		}
-		else if(c==CR || i==len) break;
-	}	
+char UART0_getChar() {                                 //Read character through UART0
+	while((UART0_FR_R & 0x10) !=0);
+return (char) UART0_DR_R;
 }
 
-
-	
-    void printStr0(char *str){     //Print String
-        while(*str){
-            UART0_WriteChar(*str);
-            str++;
-        }
-    }
-//*****************************************************************************
-//
-// UART1
-//
-//*****************************************************************************
-
-
-void UART1_Init(void){
-SYSCTL_RCGCUART_R |= 0x0002;
-SYSCTL_RCGCGPIO_R |= 0X0002;
-while((SYSCTL_PRGPIO_R & 0x02) == 0);
-UART1_CTL_R =~(0x0001);
-UART1_IBRD_R=104;
-UART1_FBRD_R=11;
-UART1_LCRH_R |= 0x70;
-UART1_CTL_R |= 0x301;
-GPIO_PORTB_DEN_R |= 0x03;
-GPIO_PORTB_AFSEL_R |= 0x03;
-GPIO_PORTB_AMSEL_R &= ~0x03;
-GPIO_PORTB_PCTL_R |= (GPIO_PORTB_PCTL_R&~0XFF)+(0X11);
+void UART0_OutChar(char data){                         //Write character through UART0
+		while((UART0_FR_R & 0x20)!=0);
+	UART0_DR_R=data;
 }
 
-
-void UART1_WriteChar(unsigned char ch)   //function to write char
-{
-	while((UART1_FR_R&0x20)!=0){}
-		UART1_DR_R = ch;	
-}
-
-unsigned char UART1_ReadChar(void){								//function that Read Char
-	while((UART1_FR_R&0x10) != 0){}
-	return (UART1_DR_R&0xFF);
-}
-
-
-void UART1_ReadString(char *str , int len)	      	//Read String
-{	
-
-	int i;
-	char c;
-	for(i=0;i<len;i++){
-	 c = UART1_ReadChar();
-		if(c!=CR){
-		*str = c;
-		str++;
-		UART1_WriteChar(c);
-		}
-		else if(c==CR || i==len) break;
+void UART0_OutString(char *pt){              //print string
+	while(*pt){
+		UART0_OutChar(*pt);
+		pt++;
 	}
 }
- void printStr1(char *str){       //Print String
-        while(*str){
-            UART1_WriteChar(*str);
-            str++;
+
+void GetCommand_UART0(char *Command,int len ){ 			// Function declaration: Retrieves command from UART0.
+    char character; 						// Variable to store each received character.
+    int i; 							// Loop counter variable.
+    for(i=0 ; i< len; i++){ 					// Loop through the command array up to its length.
+        character = UART0_getChar();			        // Read a character from UART0.
+        if(character!=CB) 					// If the character is not a break character...
+        {
+            Command[i]=character; 				// Store the character in the command array.
+            UART0_OutChar(character);			        // Echo the character back through UART0.
         }
+        else if(character==CB ||i==len) 			// If the character is a break character or the maximum length is reached...
+            break; 					        // Exit the loop.
     }
-//*****************************************************************************
-//
-// UART5
-//
-//*****************************************************************************
-
-void UART5_Init(){
-    SYSCTL_RCGCUART_R |= 0x0020;
-    SYSCTL_RCGCGPIO_R |= 0X10;
-	while((SYSCTL_PRGPIO_R & (0x01<<4)) == 0){}
-  UART5_CTL_R =~UART_CTL_UARTEN;
-	UART5_IBRD_R = 104;
-	UART5_FBRD_R = 11;
-	UART5_LCRH_R |= 0x70;
-	UART5_CTL_R |= 0x301;
-	GPIO_PORTE_DEN_R |= 0x30;
-	GPIO_PORTE_AFSEL_R |= 0x30;
-	GPIO_PORTE_AMSEL_R &= ~0x30;
-	GPIO_PORTE_PCTL_R |= (GPIO_PORTE_PCTL_R&~0XFF)|(0X11);
-	
-}
-void UART5_WriteChar(unsigned char ch){						//Write Char
-	while((UART5_FR_R&0x20) != 0){}
-	UART5_DR_R = ch;
 }
 
-unsigned char UART5_ReadChar(void){								//Read Char
-	while((UART5_FR_R&0x10) != 0){}
-	return UART5_DR_R&0xFF;
+
+
+
+
+void UART1_Init (void){// Should be called only once
+	SET_BIT(SYSCTL_RCGCUART_R , 1); // Activate UART1
+	SET_BIT(SYSCTL_RCGCGPIO_R,1); // Activate Port B 
+	while(GET_BIT(SYSCTL_PRGPIO_R , 1)==0); //Check on the clock
+	CLR_BIT(UART1_CTL_R , 0); // Disable UART1
+	UART1_IBRD_R = 0x68; // IBRD=int (160000000/ (16*9600) ) = 104
+	UART1_FBRD_R = 0xB; // FBRD = int (0.166 * 69 + 0.5)=11
+	UART1_LCRH_R = 0x0070; // 8-bit word length, enable FIFO 001110000
+	UART1_CTL_R = 0x0301; // Enable RE, IXE and UART 001100000001
+	GPIO_PORTB_AFSEL_R |= 0x03; // Enable alt function PBO , PB1  
+	GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R & 0xFFFFFF00) +0x00000011; // Configure UART on PB0 , PB1
+	GPIO_PORTB_DEN_R |= 0x03; // Enable digital I/0 on PBO , PB1 
+	GPIO_PORTB_AMSEL_R &= ~0x03; // Disable analog function on PBO , PB1
 }
 
-void UART5_ReadString(char *str , int len)	      	//Read String
-{	
+char UART1_getChar() {                             
+	while((UART1_FR_R & 0x10) !=0);
+return (char) UART1_DR_R;
+}
 
-	int i;
-	 char c;
-	for(i=0;i<len;i++){
-	  c = UART5_ReadChar();
-		if(c!=CR){
-		*str = c;
-		str++;
-		UART5_WriteChar(c);
-		}
-		else if(c==CR || i==len) break;
+void UART1_OutChar(char data){
+		while((UART1_FR_R & 0x20)!=0);
+	UART1_DR_R=data;
+}
+
+void UART1_OutString(char *pt){
+	while(*pt){
+		UART1_OutChar(*pt);
+		pt++;
 	}
 }
- void printStr5(char *str){       //Print String
-        while(*str){
-            UART5_WriteChar(*str);
-            str++;
-        }
-    }
 
-//*****************************************************************************
-//
-// UART7
-//
-//*****************************************************************************
 
-void UART7_Init(){
-	
-	SYSCTL_RCGCUART_R |= 0x0080;
-    SYSCTL_RCGCGPIO_R |= 0X0010;
-	while((SYSCTL_PRGPIO_R & (0x01<<4)) == 0){}
-	UART7_CTL_R =~UART_CTL_UARTEN;
-	UART7_IBRD_R = 104;
-	UART7_FBRD_R = 11;
-	UART7_LCRH_R |= 0x70;
-	UART7_CTL_R |= 0x301;
-	GPIO_PORTE_DEN_R |= 0x03;
-	GPIO_PORTE_AFSEL_R |= 0x03;
-	GPIO_PORTE_AMSEL_R &= ~0x03;
-	GPIO_PORTE_PCTL_R |= (GPIO_PORTE_PCTL_R&~0XFF)|(0X11);
-	
-}
-void UART7_WriteChar(unsigned char ch){						//Write Char
-	while((UART7_FR_R&0x02) != 0){}
-	UART7_DR_R = ch;
-}
 
-unsigned char UART7_ReadChar(void){								//Read Char
-	while((UART7_FR_R&0x01) != 0){}
-	return UART7_DR_R&0xFF;
-}
 
-void UART7_ReadString(char *str , int len)	      	//Read String
-{	
- 
-	int i;
-	 char c;
-	for(i=0;i<len;i++){
-		c = UART7_ReadChar();
-		if(c!=CR){
-		*str = c;
-		str++;
-		UART7_WriteChar(c);
+void GetCommand_UART1(char *Command,int len ){ 
+		
+		char character_UART1;
+		int p;		
+		for(p=0 ; p< len; p++){
+			character_UART1 = UART1_getChar();
+			if(character_UART1!=CB)
+			{
+				Command[p]=character_UART1;
+			}
+			else if(character_UART1==CB)
+				break;		
 		}
-		else if(c==CR || i==len) break;
-	}
 }
- void printStr7(char *str){       //Print String
-        while(*str){
-            UART7_WriteChar(*str);
-            str++;
-        }
-    }
+
+
+
+
