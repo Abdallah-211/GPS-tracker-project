@@ -46,6 +46,19 @@ int main(){
 		Generic_delay(3000);  					//30 SEC "GPS fix"
 		j=0;
 		Total_distance =0;
+	while(1)
+	{
+			if( UART0_getChar()=='U'){     //check for the U command
+			j= read( 11, 2);
+			eeprom_read (Read_latitude, Read_longitude, j);
+			ftos (Read_latitude , Read_longitude, Co_final, j);		
+			UART0_OutString(Co_final);
+	}
+		
+	else if( UART0_getChar()=='B')  //Enter 'B' if you dont want to take the last coordinates of the previous time the program ran                  
+		break;																																																																																																																																																																										
+		
+}
 	
 while(1){
 	
