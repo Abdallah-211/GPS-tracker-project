@@ -1,45 +1,26 @@
-//UART0
+#ifndef UART
+#define UART
+
+
+///*	UART 0 Init	*///
 void UART0_Init(void);
 
-void UART0_WriteChar(unsigned char ch);
-
-unsigned char UART0_ReadChar(void);
-
-void UART1_ReadString(char *str , int len);
-
-void printStr0(char *str);
-
-//UART1
-void UART1_Init(void);
-
-void UART1_WriteChar(unsigned char ch);
-
-unsigned char UART1_ReadChar(void);
-
-void UART1_ReadString(char *str , int len);
-
-void printStr1(char *str);
+///*	UART 0 functions	*///
+char UART0_getChar();
+void UART0_OutChar(char data);
+void UART0_OutString(char *pt);
+void GetCommand_UART0(char *Command,int len );
 
 
-//UART5
-void UART5_Init(void);
+///*	UART 1 Init	*///
+void UART1_Init (void);
 
-void UART5_WriteChar(unsigned char ch);
-
-unsigned char UART5_ReadChar(void);
-
-void UART5_ReadString(char *str , int len);
-
-void printStr5(char *str);
+///*	UART 1 functions	*///
+char UART1_getChar();
+void UART1_OutChar(char data);
+void UART1_OutString(char *pt);
+void GetCommand_UART1(char *Command,int len );
 
 
-//UART7
-void UART7_Init(void);
 
-void UART7_WriteChar(unsigned char ch);
-
-unsigned char UART7_ReadChar(void);
-
-void UART7_ReadString(char *str , int len);
-
-void printStr7(char *str);
+#endif
