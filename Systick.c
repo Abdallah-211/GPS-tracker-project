@@ -2,23 +2,17 @@
 #include "io.h"
 #include <stdint.h>
 
-void TIMER_INIT(void)
-{
-  NVIC_ST_CTRL_R = 0 ;
-  NVIC_ST_RELOAD_R = 0X00FFFFFF;
+void Systick_wait(unsigned long delay){
+	NVIC_ST_CTRL_R = 0 ;
+  NVIC_ST_RELOAD_R = delay-1;
   NVIC_ST_CURRENT_R = 0;
   NVIC_ST_CTRL_R = 0X05 ;
+	while ((NVIC_ST_CTRL_R & 0x00010000) == 0);
 }
-void WAIT_FOR_10MS(uint32_t delay)
-{
-  NVIC_ST_RELOAD_R = (delay -1);
-  while((NVIC_ST_CTRL_R & 0x10000) ==0 ); 
-}
-void number_of_10ms (uint32_t n)
-{
-  uint32_t i ;
-  for(i=1;i<=n;i++)
-  {
-    WAIT_FOR_10MS(160000);
-  }
+
+void Generic_delay(unsigned long time_delay){
+	int i =0;
+	for(i=0 ; i<time_delay ; i++){
+		Systick_wait(160000); 											//wait 10 ms 
+	}
 }
