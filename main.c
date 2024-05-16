@@ -135,13 +135,19 @@ if(j!= 0)				//don't calculate distance at first point
 }
 
 
-		if ((button_in1 != 0x10 || Total_distance >= 100)){ 			//if sw1 is pressed then turn on red light and stop taking inputs from gps
+if ( Total_distance >= 100){ 
+	LEDs_output(RED);
+}			
+					
+else if (button_in1 != 0x10){
 			LEDs_output(RED);
 			//stop taking new coordinates
-			//array into eeprom
-			}
-		if ((button_in2 != 0x01 )){ //if sw2 is pressed then clear
-			LEDs_Clear();
+		}
+			
+if ((button_in2 != 0x01 )){ //if sw2 is pressed then save in eeprom
+			eeprom_write (lat, lon, j);
+			write( j , 11, 2);
+			LEDs_output(GREEN);
 			}
 			}
 			}
